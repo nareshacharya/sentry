@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useTheme } from "@/components";
+import { Sun, Moon } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -17,7 +18,7 @@ export default function Header() {
   const { theme, toggleTheme } = useTheme();
 
   return (
-    <header className="bg-white border-b shadow-sm sticky top-0 z-10">
+    <header className="bg-white border-b shadow-sm sticky top-0 z-10 dark:bg-gray-900 dark:border-gray-800">
       <div className="container mx-auto flex items-center justify-between py-4 px-4">
         <Link href="/" className="text-xl font-bold">
           Sentry 🏢
@@ -54,8 +55,8 @@ export default function Header() {
               Login
             </Button>
           )}
-          <Button variant="ghost" size="sm" onClick={toggleTheme}>
-            {theme === "dark" ? "Light" : "Dark"} Mode
+          <Button variant="ghost" size="sm" onClick={toggleTheme} aria-label="Toggle theme">
+            {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
           </Button>
         </div>
       </div>

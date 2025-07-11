@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
 import { FaBuilding, FaHome, FaWarehouse, FaTractor } from "react-icons/fa";
+import Autocomplete from 'react-google-autocomplete';
 
 const communityOptions = [
   { type: "Apartment", label: "Apartment", icon: <FaBuilding size={40} /> },
@@ -155,7 +156,7 @@ export default function OnboardForm({ onClose }: { onClose?: () => void }) {
                     Community Name
                   </Label>
                   <Input
-                    className="h-12 text-xl px-4"
+                    className="h-12 px-4 py-2 text-[16px]"
                     placeholder="e.g. Sree Enclave"
                     value={formData.name}
                     onChange={(e) =>
@@ -168,11 +169,24 @@ export default function OnboardForm({ onClose }: { onClose?: () => void }) {
                   <Label className="text-sm text-gray-700 mb-1">
                     Address (Pick from Map)
                   </Label>
-                  <Input
+                  <Autocomplete
+                    apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}
+                    className="h-12 px-4 py-2 text-[16px] w-full border rounded-md"
+                    placeholder="Type or click a location on the map below"
                     value={formData.address}
-                    placeholder="Click a location on the map below"
-                    readOnly
-                    className="h-12 text-xl px-4"
+                    onPlaceSelected={(place) => {
+                      setFormData(prev => ({
+                        ...prev,
+                        address: place.formatted_address || "",
+                        location: place.geometry && place.geometry.location
+                          ? {
+                              lat: place.geometry.location.lat(),
+                              lng: place.geometry.location.lng(),
+                            }
+                          : prev.location,
+                      }));
+                    }}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData(prev => ({ ...prev, address: e.target.value }))}
                   />
                 </div>
 
