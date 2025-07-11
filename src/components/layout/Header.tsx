@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTheme } from "@/components";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -13,6 +14,7 @@ const navLinks = [
 
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const { theme, toggleTheme } = useTheme();
 
   return (
     <header className="bg-white border-b shadow-sm sticky top-0 z-10">
@@ -52,6 +54,9 @@ export default function Header() {
               Login
             </Button>
           )}
+          <Button variant="ghost" size="sm" onClick={toggleTheme}>
+            {theme === "dark" ? "Light" : "Dark"} Mode
+          </Button>
         </div>
       </div>
     </header>

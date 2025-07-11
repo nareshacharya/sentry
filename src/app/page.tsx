@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import Modal from "@/components/ui/modal";
 import OnboardForm from "@/components/OnboardForm";
+import { Animated } from "@/components";
 
 export default function Home() {
   const [open, setOpen] = useState(false);
@@ -15,7 +16,9 @@ export default function Home() {
       </p>
       <Button onClick={() => setOpen(true)}>Onboard Community</Button>
       <Modal open={open} onClose={() => setOpen(false)} className="p-4">
-        <OnboardForm />
+        <Animated>
+          <OnboardForm />
+        </Animated>
       </Modal>
     </main>
   );

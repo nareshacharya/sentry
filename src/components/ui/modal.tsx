@@ -19,7 +19,12 @@ export default function Modal({
 
   return ReactDOM.createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className={cn("relative bg-white w-full max-w-3xl rounded-lg shadow-lg", className)}>
+      <div
+        className={cn(
+          "relative bg-white w-full max-w-3xl rounded-lg shadow-lg max-h-[90vh] overflow-y-auto",
+          className
+        )}
+      >
         <button
           className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
           onClick={onClose}

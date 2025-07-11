@@ -1,6 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import MainLayout from "@/components/layout/MainLayout";
+import { ThemeProvider } from "@/components";
 
 export const metadata: Metadata = {
   title: "Sentry",
@@ -15,7 +16,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <MainLayout>{children}</MainLayout>
+        <ThemeProvider>
+          <MainLayout>{children}</MainLayout>
+        </ThemeProvider>
       </body>
     </html>
   );
