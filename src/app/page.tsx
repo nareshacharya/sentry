@@ -1,19 +1,25 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import Modal from "@/components/ui/modal";
+import OnboardForm from "@/components/OnboardForm";
+import { Animated } from "@/components";
 
 export default function Home() {
+  const [open, setOpen] = useState(false);
   return (
-    <main className="flex items-center justify-center h-screen bg-gray-50">
-      <Card className="w-[400px] p-6 text-center">
-        <CardContent>
-          <h1 className="text-2xl font-bold mb-4">Welcome to Sentry 🏢</h1>
-          <Button onClick={() => (window.location.href = "/onboard")}>
-            Get Started
-          </Button>
-        </CardContent>
-      </Card>
+    <main className="flex flex-col items-center justify-center h-screen bg-gray-50 text-center px-4">
+      <h1 className="text-4xl font-bold mb-4">Welcome to Sentry 🏢</h1>
+      <p className="text-lg text-gray-700 mb-8 max-w-xl">
+        Simplify management of your community with our easy onboarding.
+      </p>
+      <Button onClick={() => setOpen(true)}>Onboard Community</Button>
+      <Modal open={open} onClose={() => setOpen(false)} className="p-4">
+        <Animated>
+          <OnboardForm />
+        </Animated>
+      </Modal>
     </main>
   );
 }
