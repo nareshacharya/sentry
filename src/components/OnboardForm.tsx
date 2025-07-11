@@ -21,7 +21,7 @@ const steps = [
   { id: 3, label: "Residents & Amenities" },
 ];
 
-export default function OnboardForm() {
+export default function OnboardForm({ onClose }: { onClose?: () => void }) {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     type: "Apartment",
@@ -65,8 +65,9 @@ export default function OnboardForm() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto py-6 px-4">
-      <div className="flex justify-center mb-8">
+    <div className="max-w-4xl mx-auto py-0 px-0 h-[80vh] flex flex-col">
+      {/* Sticky header with stepper and close icon */}
+      <div className="sticky top-0 z-10 bg-white flex items-center justify-between px-6 py-4 border-b">
         <div className="flex gap-6">
           {steps.map((s, index) => {
             const isActive = step === s.id;
@@ -98,110 +99,124 @@ export default function OnboardForm() {
             );
           })}
         </div>
+        {onClose && (
+          <button
+            className="ml-4 text-gray-500 hover:text-gray-700 text-2xl"
+            onClick={onClose}
+            aria-label="Close"
+            type="button"
+          >
+            ✕
+          </button>
+        )}
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl">
-            {step === 1
-              ? "Step 1: Community Type & Info"
-              : "Step 2: Community Configuration"}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {step === 1 && (
-            <form className="space-y-6">
-              <div>
-                <Label className="text-lg mb-2 block text-gray-700">
-                  Select Community Type
-                </Label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                  {communityOptions.map((option) => (
-                    <button
-                      key={option.type}
-                      type="button"
-                      onClick={() =>
-                        setFormData((prev) => ({ ...prev, type: option.type }))
-                      }
-                      className={`border rounded-xl p-6 min-h-[140px] flex flex-col items-center justify-center text-center transition hover:shadow-md text-lg font-medium ${
-                        formData.type === option.type
-                          ? "border-blue-600 bg-blue-50 shadow-lg"
-                          : "border-gray-300 bg-white"
-                      }`}
+      {/* Scrollable content area */}
+      <div className="flex-1 overflow-y-auto px-6 py-6">
+        <Card className="shadow-none border-none">
+          <CardHeader>
+            <CardTitle className="text-2xl">
+              {step === 1
+                ? "Step 1: Community Type & Info"
+                : "Step 2: Community Configuration"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {/* Step 1 content (hidden if on step 2) */}
+            {step === 1 && (
+              <form className="space-y-6">
+                <div>
+                  <Label className="text-sm mb-2 block text-gray-700">
+                    Select Community Type
+                  </Label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                    {communityOptions.map((option) => (
+                      <button
+                        key={option.type}
+                        type="button"
+                        onClick={() =>
+                          setFormData((prev) => ({ ...prev, type: option.type }))
+                        }
+                        className={`border rounded-xl p-6 min-h-[140px] flex flex-col items-center justify-center text-center transition hover:shadow-md text-lg font-medium ${
+                          formData.type === option.type
+                            ? "border-blue-600 bg-blue-50 shadow-lg"
+                            : "border-gray-300 bg-white"
+                        }`}
+                      >
+                        <div className="text-blue-600 mb-2">{option.icon}</div>
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <Label className="text-sm text-gray-700 mb-1">
+                    Community Name
+                  </Label>
+                  <Input
+                    className="h-12 text-xl px-4"
+                    placeholder="e.g. Sree Enclave"
+                    value={formData.name}
+                    onChange={(e) =>
+                      setFormData((prev) => ({ ...prev, name: e.target.value }))
+                    }
+                  />
+                </div>
+
+                <div>
+                  <Label className="text-sm text-gray-700 mb-1">
+                    Address (Pick from Map)
+                  </Label>
+                  <Input
+                    value={formData.address}
+                    placeholder="Click a location on the map below"
+                    readOnly
+                    className="h-12 text-xl px-4"
+                  />
+                </div>
+
+                {isLoaded && (
+                  <div className="h-[350px] md:h-[400px] rounded border overflow-hidden">
+                    <GoogleMap
+                      mapContainerStyle={{ width: "100%", height: "100%" }}
+                      center={formData.location}
+                      zoom={15}
+                      onClick={handleMapClick}
                     >
-                      <div className="text-blue-600 mb-2">{option.icon}</div>
-                      {option.label}
-                    </button>
-                  ))}
-                </div>
+                      <Marker position={formData.location} />
+                    </GoogleMap>
+                  </div>
+                )}
+
+                <Button
+                  type="button"
+                  className="h-12 text-lg w-full mt-6"
+                  onClick={goToStep2}
+                >
+                  Next: Configure Community
+                </Button>
+              </form>
+            )}
+
+            {/* Step 2 content only visible when step === 2 */}
+            {step === 2 && (
+              <div className="mt-8 text-center text-gray-600">
+                <p className="text-lg">
+                  Step 2: Configure your <strong>{formData.type}</strong> community layout
+                </p>
+                <Button
+                  variant="outline"
+                  className="mt-6 text-lg"
+                  onClick={() => setStep(1)}
+                >
+                  ← Back
+                </Button>
               </div>
-
-              <div>
-                <Label className="text-lg text-gray-700 mb-1">
-                  Community Name
-                </Label>
-                <Input
-                  className="h-12 text-lg px-4"
-                  placeholder="e.g. Sree Enclave"
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, name: e.target.value }))
-                  }
-                />
-              </div>
-
-              <div>
-                <Label className="text-lg text-gray-700 mb-1">
-                  Address (Pick from Map)
-                </Label>
-                <Input
-                  value={formData.address}
-                  placeholder="Click a location on the map below"
-                  readOnly
-                  className="h-12 text-lg px-4"
-                />
-              </div>
-
-              {isLoaded && (
-                <div className="h-[350px] md:h-[400px] rounded border overflow-hidden">
-                  <GoogleMap
-                    mapContainerStyle={{ width: "100%", height: "100%" }}
-                    center={formData.location}
-                    zoom={15}
-                    onClick={handleMapClick}
-                  >
-                    <Marker position={formData.location} />
-                  </GoogleMap>
-                </div>
-              )}
-
-              <Button
-                type="button"
-                className="h-12 text-lg w-full mt-6"
-                onClick={goToStep2}
-              >
-                Continue to Step 2 →
-              </Button>
-            </form>
-          )}
-
-          {step === 2 && (
-            <div className="text-center text-gray-600">
-              <p className="text-lg">
-                Step 2: Configure your <strong>{formData.type}</strong>{" "}
-                community layout
-              </p>
-              <Button
-                variant="outline"
-                className="mt-6 text-lg"
-                onClick={() => setStep(1)}
-              >
-                ← Back
-              </Button>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

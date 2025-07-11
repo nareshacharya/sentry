@@ -17,7 +17,7 @@ export default function Home() {
       <Button onClick={() => setOpen(true)}>Onboard Community</Button>
       <Modal open={open} onClose={() => setOpen(false)} className="p-4">
         <Animated>
-          <OnboardForm />
+          <OnboardForm onClose={() => setOpen(false)} />
         </Animated>
       </Modal>
     </main>
